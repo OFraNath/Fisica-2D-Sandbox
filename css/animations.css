@@ -1,0 +1,22 @@
+/* ── Animações e keyframes ────────────────────────── */
+
+/* Flash de confirmação nos botões do header */
+@keyframes flashBtn {
+  0%   { background: var(--accent); color: #000; }
+  100% { background: transparent; }
+}
+
+/* Entrada escalonada dos botões de peça no painel */
+.piece-btn { animation: slideIn .3s ease both; }
+.piece-btn:nth-child(1) { animation-delay: .05s }
+.piece-btn:nth-child(2) { animation-delay: .10s }
+.piece-btn:nth-child(3) { animation-delay: .15s }
+.piece-btn:nth-child(4) { animation-delay: .20s }
+.piece-btn:nth-child(5) { animation-delay: .25s }
+.piece-btn:nth-child(6) { animation-delay: .30s }
+.piece-btn:nth-child(7) { animation-delay: .35s }
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-10px); }
+  to   { opacity: 1; transform: translateX(0); }
+}

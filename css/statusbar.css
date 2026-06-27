@@ -1,0 +1,15 @@
+/* ── Barra de status (rodapé) ─────────────────────── */
+#statusbar {
+  grid-column: 1 / -1;
+  background: var(--panel);
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  gap: 20px;
+  font-size: 11px;
+  color: var(--muted);
+  flex-wrap: wrap;
+}
+#statusbar span b { color: var(--text); }
+.status-mode { margin-left: auto; color: var(--accent); letter-spacing: 1px; }

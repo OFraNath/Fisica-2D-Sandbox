@@ -1,0 +1,22 @@
+/* ── Header ───────────────────────────────────────── */
+#header {
+  grid-column: 1 / -1;
+  background: var(--panel);
+  border-bottom: 2px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+#header h1 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 26px;
+  letter-spacing: 3px;
+  color: var(--accent);
+  line-height: 1;
+}
+#header .sep  { color: var(--border); font-size: 22px; }
+#header .hint { font-size: 11px; color: var(--muted); letter-spacing: 0.5px; }
+
+.btn-header { margin-left: auto; display: flex; gap: 6px; flex-wrap: wrap; }

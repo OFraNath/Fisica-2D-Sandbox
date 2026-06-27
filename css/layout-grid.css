@@ -1,0 +1,8 @@
+/* ── Grid principal do app ────────────────────────── */
+#app {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  grid-template-rows: 48px 1fr 40px;
+  height: 100vh;
+  gap: 0;
+}

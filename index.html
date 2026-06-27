@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Física 2D — Sandbox</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
+
+  <link rel="stylesheet" href="css/reset-and-variables.css">
+  <link rel="stylesheet" href="css/layout-grid.css">
+  <link rel="stylesheet" href="css/header.css">
+  <link rel="stylesheet" href="css/panel-sidebar.css">
+  <link rel="stylesheet" href="css/buttons.css">
+  <link rel="stylesheet" href="css/sliders-and-inputs.css">
+  <link rel="stylesheet" href="css/canvas-and-overlays.css">
+  <link rel="stylesheet" href="css/statusbar.css">
+  <link rel="stylesheet" href="css/tooltip.css">
+  <link rel="stylesheet" href="css/modal-help.css">
+  <link rel="stylesheet" href="css/animations.css">
+</head>
+<body>
+<div id="app">
+
+  <header id="header">
+    <h1>FÍSICA 2D</h1>
+    <span class="sep">|</span>
+    <span class="hint">CLIQUE PARA SOLTAR • H = AJUDA</span>
+    <div class="btn-header">
+      <button class="btn" id="btn-pause"   title="Espaço">⏸ PAUSAR</button>
+      <button class="btn" id="btn-undo"    title="Ctrl+Z">↶ DESFAZER</button>
+      <button class="btn" id="btn-redo"    title="Ctrl+Shift+Z">↷ REFAZER</button>
+      <button class="btn" id="btn-rain"    title="X">🌧 CHUVA</button>
+      <button class="btn" id="btn-explode" title="E">💥 EXPLODIR</button>
+      <button class="btn danger" id="btn-clear" title="C">🗑 LIMPAR</button>
+      <button class="btn" id="btn-help"    title="H">❓ AJUDA</button>
+    </div>
+  </header>
+
+  <aside id="panel">
+    <div class="section-label">Peças</div>
+    <!-- Buttons injetados por js/ui/panel-piece-buttons.js -->
+
+    <div class="section-label" style="margin-top:10px">Ferramentas</div>
+    <div class="tool-row">
+      <button class="tool-btn active" data-mode="place"  title="P">📦 Soltar</button>
+      <button class="tool-btn"        data-mode="select" title="S">🔲 Selecionar</button>
+      <button class="tool-btn"        data-mode="joint"  title="J">🔗 Conectar</button>
+    </div>
+    <div class="prop-row" title="Mais alto = colisões mais precisas, porém mais pesado para a CPU">
+      <span>Precisão da física</span><span class="prop-val" id="val-precision">10</span>
+    </div>
+    <input type="range" id="sl-precision" min="5" max="500" step="1" value="10">
+    <button class="tool-btn" id="btn-potato"
+            style="width:100%;text-align:center;margin-top:4px;margin-bottom:8px;"
+            title="Desativa efeitos visuais pesados para máxima performance">
+      🥔 PC Batata: OFF
+    </button>
+
+    <div class="section-label" style="margin-top:6px">Propriedades</div>
+    <div class="prop-group">
+      <div class="prop-row"><span>Tamanho</span>       <span class="prop-val" id="val-size">1.0×</span></div>
+      <input type="range" id="sl-size" min="0.4" max="3"   step="0.1"   value="1">
+
+      <div class="prop-row"><span>Restituição</span>   <span class="prop-val" id="val-rest">0.3</span></div>
+      <input type="range" id="sl-rest" min="0"   max="1"   step="0.05"  value="0.3">
+
+      <div class="prop-row"><span>Fricção</span>       <span class="prop-val" id="val-fric">0.5</span></div>
+      <input type="range" id="sl-fric" min="0"   max="1"   step="0.05"  value="0.5">
+
+      <div class="prop-row"><span>Densidade</span>     <span class="prop-val" id="val-dens">0.01</span></div>
+      <input type="range" id="sl-dens" min="0.001" max="0.1" step="0.001" value="0.01">
+
+      <div class="prop-row"><span>Cores variadas</span><input type="checkbox" id="chk-colorvar"></div>
+    </div>
+
+    <div class="section-label" style="margin-top:6px">Mundo</div>
+    <div class="prop-group">
+      <div class="prop-row"><span>Gravidade</span>          <span class="prop-val" id="val-grav">1.0</span></div>
+      <input type="range" id="sl-grav" min="-2" max="3" step="0.1" value="1">
+
+      <div class="prop-row"><span>Vento</span>              <span class="prop-val" id="val-wind">0.0</span></div>
+      <input type="range" id="sl-wind" min="-3" max="3" step="0.1" value="0">
+
+      <div class="prop-row"><span>Peças podem quebrar</span><input type="checkbox" id="chk-fracture" checked></div>
+      <div class="prop-row"><span>Resistência</span>        <span class="prop-val" id="val-toughness">5</span></div>
+      <input type="range" id="sl-toughness" min="1" max="10" step="1" value="5">
+    </div>
+  </aside>
+
+  <div id="canvas-wrap">
+    <div id="spawn-ghost"></div>
+    <div id="select-rect"></div>
+  </div>
+
+  <div id="statusbar">
+    <span>Corpos: <b id="st-bodies">0</b></span>
+    <span>Selecionado: <b id="st-sel">—</b></span>
+    <span>Selecionados: <b id="st-sel-count">0</b></span>
+    <span>Zoom: <b id="st-zoom">100%</b></span>
+    <span>FPS: <b id="st-fps">60</b></span>
+    <span class="status-mode" id="st-mode">MODO: SOLTAR</span>
+  </div>
+
+</div><!-- #app -->
+
+<div id="tooltip"></div>
+
+<div id="help-modal" class="modal-overlay">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h2>Atalhos</h2>
+      <button id="btn-help-close" class="btn">✕</button>
+    </div>
+    <div class="modal-body">
+      <ul>
+        <li><span>Pausar / retomar</span>               <b>Espaço</b></li>
+        <li><span>Selecionar peça</span>                <b>1–7</b></li>
+        <li><span>Soltar / Selecionar / Conectar</span> <b>P / S / J</b></li>
+        <li><span>Travar / destravar seleção</span>     <b>L</b></li>
+        <li><span>Apagar seleção (ou último corpo)</span><b>Delete</b></li>
+        <li><span>Apagar corpo sob o cursor</span>      <b>Shift+Clique</b></li>
+        <li><span>Desfazer / Refazer</span>             <b>Ctrl+Z / Ctrl+Shift+Z</b></li>
+        <li><span>Aumentar / diminuir tamanho</span>    <b>+ / -</b></li>
+        <li><span>Zoom</span>                           <b>Scroll</b></li>
+        <li><span>Mover câmera</span>                   <b>Alt+Arrastar</b></li>
+        <li><span>Resetar câmera</span>                 <b>R</b></li>
+        <li><span>Ímã (botão direito repele)</span>     <b>M + Clique</b></li>
+        <li><span>Gravidade zero</span>                 <b>G</b></li>
+        <li><span>Explodir / Limpar / Chuva</span>      <b>E / C / X</b></li>
+        <li><span>Esta ajuda</span>                     <b>H</b></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ── Ordem de carregamento importa: config → engine → … → ui → main ── -->
+<script src="js/config/pieces-definitions.js"></script>
+<script src="js/config/world-constants.js"></script>
+
+<script src="js/utils/math-helpers.js"></script>
+<script src="js/utils/color-helpers.js"></script>
+
+<script src="js/engine/matter-setup.js"></script>
+<script src="js/engine/world-boundaries.js"></script>
+
+<script src="js/camera/camera-state.js"></script>
+<script src="js/camera/camera-controls.js"></script>
+<script src="js/camera/coordinate-transform.js"></script>
+
+<script src="js/bodies/body-factory.js"></script>
+<script src="js/bodies/body-descriptor.js"></script>
+<script src="js/bodies/body-fracture.js"></script>
+<script src="js/bodies/body-rain-burst.js"></script>
+
+<script src="js/tools/ui-state.js"></script>
+<script src="js/tools/history-undo-redo.js"></script>
+<script src="js/tools/mode-manager.js"></script>
+<script src="js/tools/selection-tool.js"></script>
+<script src="js/tools/joint-tool.js"></script>
+<script src="js/tools/lock-tool.js"></script>
+<script src="js/tools/magnet-tool.js"></script>
+
+<script src="js/ui/panel-piece-buttons.js"></script>
+<script src="js/ui/spawn-ghost-cursor.js"></script>
+<script src="js/ui/sliders-binding.js"></script>
+<script src="js/ui/header-buttons.js"></script>
+<script src="js/ui/statusbar-updater.js"></script>
+<script src="js/ui/tooltip-piece-buttons.js"></script>
+<script src="js/ui/modal-help.js"></script>
+<script src="js/ui/potato-mode.js"></script>
+
+<script src="js/audio/collision-sound.js"></script>
+
+<script src="js/render/glow-layer.js"></script>
+<script src="js/render/squash-animation.js"></script>
+<script src="js/render/selection-highlight.js"></script>
+<script src="js/render/floor-line.js"></script>
+<script src="js/render/render-loop.js"></script>
+
+<script src="js/engine/physics-loop.js"></script>
+<script src="js/engine/collision-handler.js"></script>
+
+<script src="js/keyboard-shortcuts.js"></script>
+<script src="js/canvas-mouse-events.js"></script>
+<script src="js/fps-counter.js"></script>
+<script src="js/initial-spawn.js"></script>
+</body>
+</html>

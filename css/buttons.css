@@ -1,0 +1,17 @@
+/* ── Botões genéricos (header e outros) ───────────── */
+.btn {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  padding: 5px 10px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: all .15s;
+  letter-spacing: 0.5px;
+}
+.btn:hover        { border-color: var(--accent);  color: var(--accent); }
+.btn.danger:hover { border-color: var(--accent2); color: var(--accent2); }
+.btn:active       { transform: scale(.95); }
+.btn.flash        { animation: flashBtn .3s ease; }

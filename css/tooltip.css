@@ -1,0 +1,16 @@
+/* ── Tooltip flutuante ────────────────────────────── */
+#tooltip {
+  position: fixed;
+  background: #222;
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-size: 11px;
+  padding: 5px 10px;
+  border-radius: var(--radius);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity .15s;
+  z-index: 100;
+  white-space: nowrap;
+}
+#tooltip.show { opacity: 1; }

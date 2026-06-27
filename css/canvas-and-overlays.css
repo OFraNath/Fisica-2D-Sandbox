@@ -1,0 +1,30 @@
+/* ── Área do canvas ───────────────────────────────── */
+#canvas-wrap {
+  position: relative;
+  overflow: hidden;
+  background: #111;
+  background-image:
+    linear-gradient(rgba(255,255,255,.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.02) 1px, transparent 1px);
+  background-size: 40px 40px;
+  cursor: crosshair;
+}
+#canvas-wrap canvas { display: block; }
+
+/* ── Ghost de spawn (preview da peça sob o cursor) ── */
+#spawn-ghost {
+  position: absolute;
+  pointer-events: none;
+  opacity: .45;
+  border-radius: 3px;
+  transition: opacity .1s;
+}
+
+/* ── Retângulo de seleção drag ── */
+#select-rect {
+  position: absolute;
+  border: 1px dashed var(--accent);
+  background: rgba(240,192,64,.08);
+  display: none;
+  pointer-events: none;
+}
