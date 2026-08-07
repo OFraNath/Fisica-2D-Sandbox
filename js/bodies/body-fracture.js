@@ -16,6 +16,12 @@ function explodeBodyIntoPieces(b, spawnedShardsArray) {
   const vel          = { ...b.velocity };
   const sizeFactor   = b.plugin.sizeFactor || 1;
   const originalDesc = toDescriptor(b);
+  const parentMat    = {
+    restitution: b.plugin.baseRestitution !== undefined ? b.plugin.baseRestitution : b.restitution,
+    friction: b.friction, density: b.density, frictionAir: b.frictionAir,
+  };
+  // Separação radial proporcional à peça para não nascerem sobrepostas
+  const spread = Math.max(14, sizeFactor * 0.25 * Math.max(piece.w, piece.h));
 
   World.remove(engine.world, b);
   bodyCount = Math.max(0, bodyCount - 1);
@@ -27,17 +33,22 @@ function explodeBodyIntoPieces(b, spawnedShardsArray) {
 
     const shard = spawnFromDescriptor({
       pieceId:     b.label,
-      x:           pos.x + Math.cos(angle) * 12,
-      y:           pos.y + Math.sin(angle) * 12,
+      x:           pos.x + Math.cos(angle) * spread,
+      y:           pos.y + Math.sin(angle) * spread,
       vx:          vel.x * 0.4 + Math.cos(angle) * forceMagnitude,
       vy:          vel.y * 0.4 + Math.sin(angle) * forceMagnitude - 2,
       size:        sizeFactor * 0.35,
-      restitution: b.restitution, friction: b.friction, density: b.density,
+      restitution: parentMat.restitution,
+      friction:    parentMat.friction,
+      density:     parentMat.density,
+      frictionAir: parentMat.frictionAir,
       color:       b.plugin.color || piece.color,
       isFragment:  true,
     }, false);
 
     if (shard) {
+      // Herda rotação e ganha giro aleatório (efeito de "estilhaço")
+      Body.setAngularVelocity(shard, b.angularVelocity + (Math.random() - 0.5) * 0.3);
       localShards.push(shard);
       if (spawnedShardsArray) spawnedShardsArray.push(shard);
     }
@@ -55,22 +66,31 @@ function explodeBodyIntoPieces(b, spawnedShardsArray) {
 function fractureBody(b, piece) {
   const pos  = { ...b.position };
   const vel  = { ...b.velocity };
+  const spread = Math.max(10, (b.plugin.sizeFactor || 1) * 0.25 * Math.max(piece.w, piece.h) * 0.7);
+  const parentMat = {
+    restitution: b.plugin.baseRestitution !== undefined ? b.plugin.baseRestitution : b.restitution,
+    friction: b.friction, density: b.density, frictionAir: b.frictionAir,
+  };
   World.remove(engine.world, b);
   bodyCount = Math.max(0, bodyCount - 1);
 
   for (let i = 0; i < FRACTURE_FRAGMENTS_IMPACT; i++) {
     const ang = (Math.PI * 2 / FRACTURE_FRAGMENTS_IMPACT) * i + Math.random();
-    spawnFromDescriptor({
+    const shard = spawnFromDescriptor({
       pieceId:     piece.id,
-      x:           pos.x + Math.cos(ang) * 10,
-      y:           pos.y + Math.sin(ang) * 10,
+      x:           pos.x + Math.cos(ang) * spread,
+      y:           pos.y + Math.sin(ang) * spread,
       vx:          vel.x * 0.5 + Math.cos(ang) * 3,
       vy:          vel.y * 0.5 + Math.sin(ang) * 3,
       size:        (b.plugin.sizeFactor || 1) * 0.55,
-      restitution: b.restitution, friction: b.friction, density: b.density,
+      restitution: parentMat.restitution,
+      friction:    parentMat.friction,
+      density:     parentMat.density,
+      frictionAir: parentMat.frictionAir,
       color:       b.plugin.color || piece.color,
       isFragment:  true,
     }, false);
+    if (shard) Body.setAngularVelocity(shard, b.angularVelocity + (Math.random() - 0.5) * 0.25);
   }
   updateStatus();
 }

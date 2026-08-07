@@ -23,6 +23,7 @@ bindSlider('sl-size', 'size',        'val-size', v => v.toFixed(1) + '×');
 bindSlider('sl-rest', 'restitution', 'val-rest', v => v.toFixed(2));
 bindSlider('sl-fric', 'friction',    'val-fric', v => v.toFixed(2));
 bindSlider('sl-dens', 'density',     'val-dens', v => v.toFixed(3));
+bindSlider('sl-airdrag', 'frictionAir', 'val-airdrag', v => v.toFixed(3));
 
 document.getElementById('chk-colorvar').addEventListener('change', function () {
   props.colorVariation = this.checked;
@@ -30,8 +31,9 @@ document.getElementById('chk-colorvar').addEventListener('change', function () {
 
 // Propriedades do mundo (afetam corpos existentes em tempo real)
 document.getElementById('sl-grav').addEventListener('input', function () {
-  engine.gravity.y = parseFloat(this.value);
-  document.getElementById('val-grav').textContent = parseFloat(this.value).toFixed(1);
+  uniformGravity = parseFloat(this.value);
+  if (!pointGravityEnabled) engine.gravity.y = uniformGravity;
+  document.getElementById('val-grav').textContent = uniformGravity.toFixed(1);
 });
 
 document.getElementById('sl-wind').addEventListener('input', function () {
@@ -43,7 +45,31 @@ document.getElementById('sl-precision').addEventListener('input', function () {
   const v = parseInt(this.value);
   engine.positionIterations = v;
   engine.velocityIterations = Math.max(1, v - 2);
+  engine.constraintIterations = clamp(Math.round(v / 4), 2, 8);
   document.getElementById('val-precision').textContent = v;
+});
+
+// Gravidade pontual (buraco negro)
+const chkPointGrav = document.getElementById('chk-pointgrav');
+const slPointGrav  = document.getElementById('sl-pointgrav');
+
+/**
+ * Liga/desliga a gravidade pontual, zerando ou restaurando a uniforme.
+ * @param {boolean} enabled
+ */
+function setPointGravity(enabled) {
+  pointGravityEnabled = enabled;
+  chkPointGrav.checked = enabled;
+  engine.gravity.y = enabled ? 0 : uniformGravity;
+  const slGrav = document.getElementById('sl-grav');
+  slGrav.value = engine.gravity.y;
+  document.getElementById('val-grav').textContent = engine.gravity.y.toFixed(1);
+}
+
+chkPointGrav.addEventListener('change', function () { setPointGravity(this.checked); });
+slPointGrav.addEventListener('input', function () {
+  gravityStrength = parseFloat(this.value);
+  document.getElementById('val-pointgrav').textContent = parseFloat(this.value).toFixed(1);
 });
 
 // Fratura

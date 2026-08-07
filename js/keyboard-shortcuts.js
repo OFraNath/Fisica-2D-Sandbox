@@ -35,12 +35,15 @@ document.addEventListener('keydown', e => {
 
   // Modos e ações individuais
   if (e.key === 'g' || e.key === 'G') {
-    engine.gravity.y = engine.gravity.y === 0 ? 1 : 0;
+    if (pointGravityEnabled) setPointGravity(false);
+    const nextY = engine.gravity.y === 0 ? (uniformGravity || 1) : 0;
+    engine.gravity.y = nextY;
     const sl = document.getElementById('sl-grav');
     sl.value = engine.gravity.y;
     document.getElementById('val-grav').textContent = engine.gravity.y.toFixed(1);
     return;
   }
+  if (e.key === 'b' || e.key === 'B') { setPointGravity(!pointGravityEnabled); return; }
   if (e.key === 'p' || e.key === 'P') { setMode('place');  return; }
   if (e.key === 's' || e.key === 'S') { setMode('select'); return; }
   if (e.key === 'j' || e.key === 'J') { setMode('joint');  return; }

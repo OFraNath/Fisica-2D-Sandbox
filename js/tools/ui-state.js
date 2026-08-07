@@ -15,11 +15,17 @@ let potatoMode     = false;     // desativa efeitos visuais pesados
 let fractureEnabled   = true;
 let fractureThreshold = 30;     // velocidade mínima de impacto para fraturar
 
+// Gravidade pontual (buraco negro)
+let pointGravityEnabled = false; // se true, atrai corpos para o centro da viewport
+let gravityStrength     = 1;     // multiplicador de força (slider do painel)
+let uniformGravity      = 1;     // gravidade uniforme do usuário (restaurada ao desligar o ponto)
+
 // Propriedades do próximo corpo a ser spawnado (ligadas aos sliders do painel)
 const props = {
   size:           1,
   restitution:    0.3,
   friction:       0.5,
   density:        0.01,
+  frictionAir:    0.01,
   colorVariation: false,
 };

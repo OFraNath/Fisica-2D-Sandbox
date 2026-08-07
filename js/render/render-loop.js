@@ -5,9 +5,10 @@
 
 Events.on(render, 'afterRender', () => {
   const ctx    = render.context;
-  const bodies = Composite.allBodies(engine.world);
+  const bodies = getBodies(); // cache de corpos atualizado em physics-loop.js
 
   drawFloorLine(ctx);
+  drawGravityPointMarker(ctx);
 
   // No modo batata, apenas destaque de seleção e joint (sem efeitos pesados)
   if (potatoMode) {

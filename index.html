@@ -81,6 +81,13 @@
       <div class="prop-row"><span>Vento</span>              <span class="prop-val" id="val-wind">0.0</span></div>
       <input type="range" id="sl-wind" min="-3" max="3" step="0.1" value="0">
 
+      <div class="prop-row"><span>Arrasto do ar</span>      <span class="prop-val" id="val-airdrag">0.010</span></div>
+      <input type="range" id="sl-airdrag" min="0" max="0.05" step="0.001" value="0.01">
+
+      <div class="prop-row"><span>Gravidade pontual</span>  <input type="checkbox" id="chk-pointgrav"></div>
+      <div class="prop-row"><span>Força do ponto</span>     <span class="prop-val" id="val-pointgrav">1.0</span></div>
+      <input type="range" id="sl-pointgrav" min="0.5" max="3" step="0.1" value="1">
+
       <div class="prop-row"><span>Peças podem quebrar</span><input type="checkbox" id="chk-fracture" checked></div>
       <div class="prop-row"><span>Resistência</span>        <span class="prop-val" id="val-toughness">5</span></div>
       <input type="range" id="sl-toughness" min="1" max="10" step="1" value="5">
@@ -126,6 +133,7 @@
         <li><span>Resetar câmera</span>                 <b>R</b></li>
         <li><span>Ímã (botão direito repele)</span>     <b>M + Clique</b></li>
         <li><span>Gravidade zero</span>                 <b>G</b></li>
+        <li><span>Gravidade pontual (buraco negro)</span><b>B</b></li>
         <li><span>Explodir / Limpar / Chuva</span>      <b>E / C / X</b></li>
         <li><span>Esta ajuda</span>                     <b>H</b></li>
       </ul>
@@ -159,6 +167,7 @@
 <script src="js/tools/joint-tool.js"></script>
 <script src="js/tools/lock-tool.js"></script>
 <script src="js/tools/magnet-tool.js"></script>
+<script src="js/tools/drag-throw.js"></script>
 
 <script src="js/ui/panel-piece-buttons.js"></script>
 <script src="js/ui/spawn-ghost-cursor.js"></script>
@@ -175,6 +184,7 @@
 <script src="js/render/squash-animation.js"></script>
 <script src="js/render/selection-highlight.js"></script>
 <script src="js/render/floor-line.js"></script>
+<script src="js/render/gravity-point-marker.js"></script>
 <script src="js/render/render-loop.js"></script>
 
 <script src="js/engine/physics-loop.js"></script>

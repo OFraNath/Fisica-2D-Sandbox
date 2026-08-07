@@ -16,9 +16,10 @@ function toDescriptor(b) {
     vx:          b.velocity.x,
     vy:          b.velocity.y,
     size:        b.plugin.sizeFactor || 1,
-    restitution: b.restitution,
+    restitution: b.plugin.baseRestitution !== undefined ? b.plugin.baseRestitution : b.restitution,
     friction:    b.friction,
     density:     b.density,
+    frictionAir: b.frictionAir,
     color:       b.plugin.color,
     isFragment:  b.plugin.isFragment,
   };

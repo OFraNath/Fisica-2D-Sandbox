@@ -12,17 +12,19 @@ function ensureAudio() {
 
 /**
  * Toca um impacto grave de curta duração.
- * @param {number} vol  Volume normalizado 0–1
+ * @param {number} vol        Volume normalizado 0–1
+ * @param {number} [freqScale] Fator de tom (peças pequenas = mais agudo)
  */
-function playThud(vol) {
+function playThud(vol, freqScale) {
   if (!audioCtx) return;
+  freqScale = freqScale || 1;
   const t   = audioCtx.currentTime;
   const osc = audioCtx.createOscillator();
   const gain = audioCtx.createGain();
 
   osc.type = 'sine';
-  osc.frequency.setValueAtTime(90 + Math.random() * 40, t);
-  osc.frequency.exponentialRampToValueAtTime(40, t + 0.12);
+  osc.frequency.setValueAtTime((90 + Math.random() * 40) * freqScale, t);
+  osc.frequency.exponentialRampToValueAtTime(40 * freqScale, t + 0.12);
   gain.gain.setValueAtTime(vol * 0.5, t);
   gain.gain.exponentialRampToValueAtTime(0.001, t + 0.15);
 

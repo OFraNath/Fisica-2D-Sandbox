@@ -40,7 +40,7 @@ render.bounds.max.x = W; render.bounds.max.y = H;
 const mouse = Mouse.create(render.canvas);
 const mConstraint = MouseConstraint.create(engine, {
   mouse,
-  constraint: { stiffness: 0.2, render: { visible: false } },
+  constraint: { stiffness: 0.5, render: { visible: false } },
 });
 World.add(engine.world, mConstraint);
 render.mouse = mouse;
@@ -48,3 +48,18 @@ render.mouse = mouse;
 Render.run(render);
 const runner = Runner.create({ isFixed: true, delta: 1000 / 60 });
 Runner.run(runner, engine);
+
+// Passo fixo sincronizado com a taxa de atualização do display (60–120Hz).
+// Com isFixed, a física anda 1 passo por frame de tela, eliminando o jitter
+// em monitores de 120/144Hz. A calibração amostra o rAF por 1 segundo.
+(function calibrateRefreshRate() {
+  let frames = 0;
+  const start = performance.now();
+  function sample() {
+    frames++;
+    if (performance.now() - start < 1000) { requestAnimationFrame(sample); return; }
+    const hz = Math.min(120, Math.max(60, Math.round(frames * 1000 / (performance.now() - start))));
+    runner.delta = 1000 / hz;
+  }
+  requestAnimationFrame(sample);
+})();

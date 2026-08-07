@@ -20,8 +20,15 @@ function spawnFromDescriptor(d, record) {
   const bh    = piece.h * size / 2;
   const color = d.color || (props.colorVariation ? colorVariant(piece.color) : piece.color);
 
+  // Valores vêm do descriptor, com fallback para os sliders do painel.
+  const rest = d.restitution !== undefined ? d.restitution : props.restitution;
+  const fric = d.friction    !== undefined ? d.friction    : props.friction;
+  const dens = d.density     !== undefined ? d.density     : props.density;
+  const drag = d.frictionAir !== undefined ? d.frictionAir
+            : (props.frictionAir !== undefined ? props.frictionAir : DEFAULT_AIR_DRAG);
+
   const opts = {
-    restitution: d.restitution, friction: d.friction, density: d.density,
+    restitution: rest, friction: fric, density: dens, frictionAir: drag,
     label: piece.id, angle: d.angle || 0,
     render: { fillStyle: color + 'cc', strokeStyle: color, lineWidth: 2 },
   };
@@ -42,6 +49,9 @@ function spawnFromDescriptor(d, record) {
   body.plugin.sizeFactor  = size;
   body.plugin.color       = color;
   body.plugin.isFragment  = !!d.isFragment;
+  // Guarda a restituição original para a variação por velocidade de impacto
+  // (o campo body.restitution é ajustado a cada colisão em collision-handler.js).
+  body.plugin.baseRestitution = rest;
   cacheLocalVerts(body);
 
   World.add(engine.world, body);
