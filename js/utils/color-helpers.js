@@ -21,3 +21,15 @@ function lighten(hex, amt) {
  * @returns {string}    Variante hex
  */
 function colorVariant(hex) { return lighten(hex, Math.random() * 80 - 40); }
+
+/**
+ * Converte uma cor hex em canais RGB (0–255).
+ * Usado pelos backends GPU/DOM para montar cores sem parse por frame.
+ * @param {string} hex  Cor no formato '#rrggbb'
+ * @returns {number[]}  [r, g, b]
+ */
+function hexToRgb(hex) {
+  const n = parseInt((hex || '').slice(1), 16);
+  if (!isFinite(n)) return [240, 192, 64];
+  return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+}

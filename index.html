@@ -92,6 +92,25 @@
       <div class="prop-row"><span>Resistência</span>        <span class="prop-val" id="val-toughness">5</span></div>
       <input type="range" id="sl-toughness" min="1" max="10" step="1" value="5">
     </div>
+
+    <div class="section-label" style="margin-top:6px">Motor</div>
+    <div class="prop-group">
+      <div class="prop-row"><span>Gráficos</span></div>
+      <select id="sel-render" title="Quem desenha a tela">
+        <option value="auto" selected>AUTO (detecta)</option>
+        <option value="gpu">GPU · WebGL2</option>
+        <option value="cpu">CPU · Canvas 2D</option>
+        <option value="dom">FRONT · DOM</option>
+      </select>
+      <div class="prop-row"><span>Simulação</span></div>
+      <select id="sel-sim" title="Quem resolve a física">
+        <option value="cpu" selected>CPU · Matter.js</option>
+        <option value="gpu" disabled
+          title="Roadmap: física em GPU exigiria reescrever o solver (WebGPU compute) — fora do escopo 'sem reescrita'">
+          GPU · WebGPU (roadmap)
+        </option>
+      </select>
+    </div>
   </aside>
 
   <div id="canvas-wrap">
@@ -105,6 +124,7 @@
     <span>Selecionados: <b id="st-sel-count">0</b></span>
     <span>Zoom: <b id="st-zoom">100%</b></span>
     <span>FPS: <b id="st-fps">60</b></span>
+    <span>Render: <b id="st-render">—</b></span>
     <span class="status-mode" id="st-mode">MODO: SOLTAR</span>
   </div>
 
@@ -177,6 +197,16 @@
 <script src="js/ui/tooltip-piece-buttons.js"></script>
 <script src="js/ui/modal-help.js"></script>
 <script src="js/ui/potato-mode.js"></script>
+
+<script src="js/graphics/backend-info.js"></script>
+<script src="js/graphics/webgl/webgl-core.js"></script>
+<script src="js/graphics/webgl/webgl-geometry.js"></script>
+<script src="js/graphics/webgl/webgl-draw.js"></script>
+<script src="js/graphics/webgl/webgl-bloom.js"></script>
+<script src="js/graphics/backend-cpu.js"></script>
+<script src="js/graphics/backend-gpu.js"></script>
+<script src="js/graphics/backend-dom.js"></script>
+<script src="js/graphics/render-backend-manager.js"></script>
 
 <script src="js/audio/collision-sound.js"></script>
 

@@ -13,6 +13,15 @@ const GLOW_SCALE       = 0.5;   // resolução da camada de glow (0.5 = metade d
 const GLOW_BLUR_PX     = 13;    // raio de blur único equivalente ao shadowBlur(22)
 const GLOW_CULL_MARGIN = 80;    // margem extra para não cortar halos na borda da view
 
+// Backends de render (GPU/WebGL2 e FRONT/DOM)
+const GPU_OUTLINE_PX     = 2;   // espessura do contorno dos corpos (px de tela)
+const GPU_GLOW_STROKE_PX = 4;   // espessura do traço do glow (paridade com o 2D)
+const GPU_FILL_ALPHA     = 0.8; // alpha do preenchimento (paridade com o sufixo 'cc')
+const GPU_BLUR_TAPS      = 25;  // taps do blur gaussiano do glow (ímpar, fixo no shader)
+const GPU_GLOW_AT_REST   = 0.12; // intensidade mínima do glow em repouso (calmo, não apagado)
+const GPU_GLOW_SPEED_FULL = 12;  // velocidade (px/step) que leva o glow a 100%
+const GPU_SLEEP_ALPHA     = 0.5; // opacidade de corpos adormecidos (paridade com o renderer 2D)
+
 // Fratura
 const FRACTURE_FRAGMENTS        = 6;    // fragmentos gerados por explosão manual
 const FRACTURE_FRAGMENTS_IMPACT = 3;    // fragmentos gerados por impacto

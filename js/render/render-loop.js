@@ -1,22 +1,12 @@
-// ── Loop de render: composição de todas as camadas visuais ────────────────────
-// Escuta o evento 'afterRender' do Matter.js e chama cada sub-sistema de render
-// na ordem correta. Para adicionar um novo efeito visual, crie a função no
-// arquivo correspondente em js/render/ e chame-a aqui.
+// ── Loop de render: delega o desenho ao backend ativo ─────────────────────────
+// Backend CPU: desenha no 'afterRender' do Matter (pipeline Canvas 2D
+// original, em js/graphics/backend-cpu.js). Backends GPU/DOM: o render
+// nativo é parado e o desenho acontece no 'afterUpdate' do engine.
+// O draw é agendado em microtask para rodar depois de todos os listeners do
+// evento (o physics-loop atualiza o cache de corpos no mesmo 'afterUpdate').
 
-Events.on(render, 'afterRender', () => {
-  const ctx    = render.context;
-  const bodies = getBodies(); // cache de corpos atualizado em physics-loop.js
+Events.on(render, 'afterRender', () => drawByBackend(render.context, 'cpu'));
 
-  drawFloorLine(ctx);
-  drawGravityPointMarker(ctx);
-
-  // No modo batata, apenas destaque de seleção e joint (sem efeitos pesados)
-  if (potatoMode) {
-    drawSelectionHighlight(ctx);
-    return;
-  }
-
-  drawGlowLayer(ctx, bodies);
-  drawSquashAnimations(ctx, bodies);
-  drawSelectionHighlight(ctx);
+Events.on(engine, 'afterUpdate', () => {
+  queueMicrotask(() => drawByBackend(render.context, 'external'));
 });

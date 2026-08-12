@@ -17,3 +17,18 @@ input[type=range]::-webkit-slider-thumb {
   border: 2px solid var(--bg);
 }
 input[type=checkbox] { accent-color: var(--accent); cursor: pointer; }
+
+/* ── Selects (backends de render e simulação) ── */
+select {
+  width: 100%;
+  background: var(--panel);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 4px 6px;
+  font-family: inherit;
+  font-size: 12px;
+  margin-bottom: 8px;
+  cursor: pointer;
+}
+select:disabled { opacity: .5; cursor: not-allowed; }

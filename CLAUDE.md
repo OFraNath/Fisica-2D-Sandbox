@@ -73,6 +73,18 @@ fisica2d/
     │   ├── lock-tool.js              # toggleLock(): isStatic true/false nos selecionados
     │   └── magnet-tool.js            # magnetKeyDown, mouseDown; força aplicada em physics-loop.js
     │
+    ├── graphics/
+    │   ├── render-backend-manager.js # Seleção/fallback de backends; drawByBackend(); boot
+    │   ├── backend-cpu.js            # Pipeline Canvas 2D original (fallback universal)
+    │   ├── backend-gpu.js            # Ativa/desativa WebGL2; gpuDrawFrame() (corpos + bloom)
+    │   ├── backend-dom.js            # Corpos como divs (compositor GPU, sem glow)
+    │   ├── backend-info.js           # Lê WEBGL_debug_renderer_info p/ tooltip do seletor
+    │   └── webgl/
+    │       ├── webgl-core.js         # Canvas/contexto WebGL2, shaders (body, blur, copy)
+    │       ├── webgl-geometry.js     # Cache de meshes (fan + normais de outline) por corpo
+    │       ├── webgl-draw.js         # Instâncias por frame; passes fill/outline
+    │       └── webgl-bloom.js        # FBO meia-res, blur gaussiano 2-pass, composite aditivo
+    │
     ├── ui/
     │   ├── panel-piece-buttons.js    # Injeta <button class="piece-btn"> a partir de PIECES
     │   ├── spawn-ghost-cursor.js     # updateGhost(), updateGhostPosition()
@@ -113,10 +125,11 @@ A ordem dos `<script>` no `index.html` é obrigatória porque não há módulos 
 6. `bodies/` — depende do engine, camera e utils
 7. `tools/` — depende de bodies e engine
 8. `ui/` — depende de tools e bodies
-9. `audio/`
-10. `render/` — depende de camera, bodies e tools
-11. `engine/physics-loop.js` e `engine/collision-handler.js` — registram eventos, dependem de tudo
-12. `keyboard-shortcuts.js`, `canvas-mouse-events.js`, `fps-counter.js`, `initial-spawn.js`
+9. `graphics/` — backends de render (GPU/DOM/CPU); depende de engine, camera, ui-state e constants
+10. `audio/`
+11. `render/` — depende de camera, bodies, tools e graphics
+12. `engine/physics-loop.js` e `engine/collision-handler.js` — registram eventos, dependem de tudo
+13. `keyboard-shortcuts.js`, `canvas-mouse-events.js`, `fps-counter.js`, `initial-spawn.js`
 
 ---
 
@@ -136,6 +149,8 @@ A ordem dos `<script>` no `index.html` é obrigatória porque não há módulos 
 | Mudar força do vento / ímã | `js/engine/physics-loop.js` |
 | Mudar como corpos são criados | `js/bodies/body-factory.js` |
 | Mudar animação de squash | `js/render/squash-animation.js` |
+| Mudar backend de render (GPU/DOM/CPU) | `js/graphics/render-backend-manager.js` |
+| Ajustar contorno/bloom da GPU | `world-constants.js` → constantes GPU_* |
 
 ---
 
@@ -166,6 +181,8 @@ Declaradas em `js/tools/ui-state.js` e usadas em múltiplos módulos:
 | `fractureEnabled` | boolean | Permite fratura por impacto |
 | `fractureThreshold` | number | Velocidade mínima de impacto para fraturar |
 | `bodyCount` | number | Contador de corpos dinâmicos (para status bar) |
+| `renderBackend` | string | Backend de render escolhido: 'auto' \| 'gpu' \| 'cpu' \| 'dom' (efetivo em `activeBackend`) |
+| `simulationBackend` | string | Backend de simulação: 'cpu' (Matter.js); 'gpu' é roadmap |
 
 Variáveis do Matter.js (declaradas em `engine/matter-setup.js`):
 `engine`, `render`, `runner`, `mouse`, `mConstraint`, `W`, `H`

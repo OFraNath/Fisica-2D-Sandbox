@@ -9,11 +9,48 @@
   background-size: 40px 40px;
   cursor: crosshair;
 }
-#canvas-wrap canvas { display: block; }
+/* Canvas 2D do Matter (corpos no modo CPU; overlays nos modos GPU/DOM) */
+#canvas-wrap > canvas:not(#gpu-canvas) {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2;
+}
+/* Canvas WebGL2 (corpos + bloom no modo GPU) */
+#gpu-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  display: none;
+}
+
+/* ── Camada DOM de corpos (backend FRONT, compositor GPU) ── */
+#dom-body-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  overflow: hidden;
+  display: none;
+  pointer-events: none;
+  will-change: transform;
+}
+#dom-body-layer .dom-body {
+  position: absolute;
+  top: 0;
+  left: 0;
+  box-sizing: border-box;
+  pointer-events: none;
+  will-change: transform;
+}
 
 /* ── Ghost de spawn (preview da peça sob o cursor) ── */
 #spawn-ghost {
   position: absolute;
+  z-index: 3;
   pointer-events: none;
   opacity: .45;
   border-radius: 3px;
@@ -23,6 +60,7 @@
 /* ── Retângulo de seleção drag ── */
 #select-rect {
   position: absolute;
+  z-index: 3;
   border: 1px dashed var(--accent);
   background: rgba(240,192,64,.08);
   display: none;

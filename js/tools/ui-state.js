@@ -20,6 +20,10 @@ let pointGravityEnabled = false; // se true, atrai corpos para o centro da viewp
 let gravityStrength     = 1;     // multiplicador de força (slider do painel)
 let uniformGravity      = 1;     // gravidade uniforme do usuário (restaurada ao desligar o ponto)
 
+// Motor gráfico (ver js/graphics/render-backend-manager.js)
+let renderBackend     = 'auto';  // 'auto' | 'gpu' | 'cpu' | 'dom'
+let simulationBackend = 'cpu';   // 'cpu' (Matter.js) | 'gpu' (WebGPU — roadmap)
+
 // Propriedades do próximo corpo a ser spawnado (ligadas aos sliders do painel)
 const props = {
   size:           1,
