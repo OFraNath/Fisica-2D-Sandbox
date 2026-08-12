@@ -100,7 +100,6 @@
         <option value="auto" selected>AUTO (detecta)</option>
         <option value="gpu">GPU · WebGL2</option>
         <option value="cpu">CPU · Canvas 2D</option>
-        <option value="dom">FRONT · DOM</option>
       </select>
       <div class="prop-row"><span>Simulação</span></div>
       <select id="sel-sim" title="Quem resolve a física">
@@ -119,7 +118,7 @@
   </div>
 
   <div id="statusbar">
-    <span>Corpos: <b id="st-bodies">0</b></span>
+    <span>Corpos: <b id="st-bodies">0/2000</b></span>
     <span>Selecionado: <b id="st-sel">—</b></span>
     <span>Selecionados: <b id="st-sel-count">0</b></span>
     <span>Zoom: <b id="st-zoom">100%</b></span>
@@ -155,6 +154,7 @@
         <li><span>Gravidade zero</span>                 <b>G</b></li>
         <li><span>Gravidade pontual (buraco negro)</span><b>B</b></li>
         <li><span>Explodir / Limpar / Chuva</span>      <b>E / C / X</b></li>
+        <li><span>Chuva de estresse (200 peças)</span>  <b>Shift+X</b></li>
         <li><span>Esta ajuda</span>                     <b>H</b></li>
       </ul>
     </div>
@@ -205,7 +205,6 @@
 <script src="js/graphics/webgl/webgl-bloom.js"></script>
 <script src="js/graphics/backend-cpu.js"></script>
 <script src="js/graphics/backend-gpu.js"></script>
-<script src="js/graphics/backend-dom.js"></script>
 <script src="js/graphics/render-backend-manager.js"></script>
 
 <script src="js/audio/collision-sound.js"></script>

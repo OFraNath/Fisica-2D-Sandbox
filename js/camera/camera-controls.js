@@ -28,10 +28,16 @@ function updateCameraBounds() {
   Body.setPosition(wallBottom, { x: camera.x + vw / 2,   y: camera.y + vh + T });
 
   // Acorda corpos adormecidos quando câmera se move (evita artefato de "flutuar no ar")
+  // — apenas os que cruzam o novo viewport, não o mundo inteiro.
   if (camera.x !== _lastCamX || camera.y !== _lastCamY || camera.zoom !== _lastCamZoom) {
     _lastCamX = camera.x; _lastCamY = camera.y; _lastCamZoom = camera.zoom;
+    const cullX = vw / 2 + 200 / camera.zoom, cullY = vh / 2 + 200 / camera.zoom;
     Composite.allBodies(engine.world).forEach(b => {
-      if (!b.isStatic && b.isSleeping) Body.set(b, 'isSleeping', false);
+      if (!b.isStatic && b.isSleeping) {
+        const distX = Math.abs(b.position.x - camera.x - vw / 2);
+        const distY = Math.abs(b.position.y - camera.y - vh / 2);
+        if (distX <= cullX && distY <= cullY) Body.set(b, 'isSleeping', false);
+      }
     });
   }
 }

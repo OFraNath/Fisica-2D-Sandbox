@@ -50,7 +50,7 @@ fisica2d/
     ├── engine/
     │   ├── matter-setup.js           # Cria Engine, Render, Runner, MouseConstraint; expõe W, H
     │   ├── world-boundaries.js       # Paredes e chão invisíveis (wallBottom, wallTop, etc.)
-    │   ├── physics-loop.js           # afterUpdate: vento, ímã, cap de velocidade, cleanup
+    │   ├── physics-loop.js           # afterUpdate: tuning solver por carga, vento, ímã, cap de velocidade, cleanup
     │   └── collision-handler.js      # collisionStart: som, squash, fratura por impacto
     │
     ├── camera/
@@ -77,7 +77,6 @@ fisica2d/
     │   ├── render-backend-manager.js # Seleção/fallback de backends; drawByBackend(); boot
     │   ├── backend-cpu.js            # Pipeline Canvas 2D original (fallback universal)
     │   ├── backend-gpu.js            # Ativa/desativa WebGL2; gpuDrawFrame() (corpos + bloom)
-    │   ├── backend-dom.js            # Corpos como divs (compositor GPU, sem glow)
     │   ├── backend-info.js           # Lê WEBGL_debug_renderer_info p/ tooltip do seletor
     │   └── webgl/
     │       ├── webgl-core.js         # Canvas/contexto WebGL2, shaders (body, blur, copy)
@@ -90,7 +89,7 @@ fisica2d/
     │   ├── spawn-ghost-cursor.js     # updateGhost(), updateGhostPosition()
     │   ├── sliders-binding.js        # bindSlider(), bumpSize(); conecta todos os <input> do painel
     │   ├── header-buttons.js         # Pause, Clear, Explode, Undo, Redo, Rain
-    │   ├── statusbar-updater.js      # updateStatus(), flashStatus()
+    │   ├── statusbar-updater.js      # recountBodies() (fonte única de bodyCount), updateStatus(), flashStatus()
     │   ├── tooltip-piece-buttons.js  # Tooltip ao hover nos botões de peça
     │   ├── modal-help.js             # toggleHelp(), closeHelp()
     │   └── potato-mode.js            # Botão PC Batata: desativa efeitos visuais pesados
@@ -125,7 +124,7 @@ A ordem dos `<script>` no `index.html` é obrigatória porque não há módulos 
 6. `bodies/` — depende do engine, camera e utils
 7. `tools/` — depende de bodies e engine
 8. `ui/` — depende de tools e bodies
-9. `graphics/` — backends de render (GPU/DOM/CPU); depende de engine, camera, ui-state e constants
+9. `graphics/` — backends de render (GPU/CPU); depende de engine, camera, ui-state e constants
 10. `audio/`
 11. `render/` — depende de camera, bodies, tools e graphics
 12. `engine/physics-loop.js` e `engine/collision-handler.js` — registram eventos, dependem de tudo
@@ -139,6 +138,8 @@ A ordem dos `<script>` no `index.html` é obrigatória porque não há módulos 
 |---|---|
 | Adicionar uma peça nova | `js/config/pieces-definitions.js` |
 | Mudar limites do mundo (MAX_BODIES, etc.) | `js/config/world-constants.js` |
+| Ajustar tuning do solver por carga (SOLVER_TUNE) | `world-constants.js` → SOLVER_TUNE / SLEEP_THRESHOLD_TUNE |
+| Mexer no contador de corpos (bodyCount) | Sempre via `recountBodies()` em `js/ui/statusbar-updater.js` (fonte única) |
 | Ajustar parâmetros de glow | `world-constants.js` → constantes GLOW_* |
 | Ajustar parâmetros de fratura | `world-constants.js` → constantes FRACTURE_* |
 | Mudar cores / fontes / espaçamentos | `css/reset-and-variables.css` (variáveis CSS) |
@@ -149,7 +150,7 @@ A ordem dos `<script>` no `index.html` é obrigatória porque não há módulos 
 | Mudar força do vento / ímã | `js/engine/physics-loop.js` |
 | Mudar como corpos são criados | `js/bodies/body-factory.js` |
 | Mudar animação de squash | `js/render/squash-animation.js` |
-| Mudar backend de render (GPU/DOM/CPU) | `js/graphics/render-backend-manager.js` |
+| Mudar backend de render (GPU/CPU) | `js/graphics/render-backend-manager.js` |
 | Ajustar contorno/bloom da GPU | `world-constants.js` → constantes GPU_* |
 
 ---
@@ -181,7 +182,7 @@ Declaradas em `js/tools/ui-state.js` e usadas em múltiplos módulos:
 | `fractureEnabled` | boolean | Permite fratura por impacto |
 | `fractureThreshold` | number | Velocidade mínima de impacto para fraturar |
 | `bodyCount` | number | Contador de corpos dinâmicos (para status bar) |
-| `renderBackend` | string | Backend de render escolhido: 'auto' \| 'gpu' \| 'cpu' \| 'dom' (efetivo em `activeBackend`) |
+| `renderBackend` | string | Backend de render escolhido: 'auto' \| 'gpu' \| 'cpu' (efetivo em `activeBackend`) |
 | `simulationBackend` | string | Backend de simulação: 'cpu' (Matter.js); 'gpu' é roadmap |
 
 Variáveis do Matter.js (declaradas em `engine/matter-setup.js`):

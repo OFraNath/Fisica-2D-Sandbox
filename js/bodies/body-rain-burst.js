@@ -1,9 +1,12 @@
 // ── Chuva de peças aleatórias ─────────────────────────────────────────────────
-// Lança 15 peças em cascata a partir do topo da viewport atual.
+// Lança peças em cascata a partir do topo da viewport atual.
+// @param {number} [quantity] Quantidade (padrão 15; >100 = stress test)
 
-function rainBurst() {
+function rainBurst(quantity) {
+  const count = quantity || 15;
+  if (count > 100) flashStatus('STRESS TEST: ' + count + ' PEÇAS');
   const vw = W / camera.zoom;
-  for (let i = 0; i < 15; i++) {
+  for (let i = 0; i < count; i++) {
     setTimeout(() => {
       const piece = PIECES[Math.floor(Math.random() * PIECES.length)];
       const x     = camera.x + 20 + Math.random() * (vw - 40);

@@ -61,7 +61,6 @@ btnExplode.addEventListener('click', () => {
   pushHistory(
     () => {
       World.remove(engine.world, createdShards);
-      bodyCount = Math.max(0, bodyCount - createdShards.length);
       destroyedBodies.forEach(item => {
         World.add(engine.world, item.body);
         World.add(engine.world, item.constraints);
@@ -69,27 +68,24 @@ btnExplode.addEventListener('click', () => {
         Body.setPosition(item.body, { x: item.desc.x, y: item.desc.y });
         Body.setVelocity(item.body, { x: item.desc.vx, y: item.desc.vy });
         Body.setAngle(item.body, item.desc.angle);
-        bodyCount++;
       });
       fragmentVelocitiesBefore.forEach(item => {
         Body.set(item.body, 'isSleeping', false);
         Body.setVelocity(item.body, { x: item.vx, y: item.vy });
       });
-      updateStatus();
+      recountBodies();
     },
     () => {
       destroyedBodies.forEach(item => {
         World.remove(engine.world, item.body);
         World.remove(engine.world, item.constraints);
-        bodyCount = Math.max(0, bodyCount - 1);
       });
       World.add(engine.world, createdShards);
-      bodyCount += createdShards.length;
-      updateStatus();
+      recountBodies();
     }
   );
 
-  updateStatus();
+  recountBodies();
 });
 
 // ── Desfazer / Refazer ──

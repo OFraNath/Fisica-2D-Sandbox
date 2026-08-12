@@ -12,7 +12,7 @@ function spawnFromDescriptor(d, record) {
   const dynCount = Composite.allBodies(engine.world).filter(b => !b.isStatic).length;
   if (dynCount >= MAX_BODIES) { flashStatus('LIMITE DE CORPOS ATINGIDO'); return null; }
 
-  const piece = PIECES.find(p => p.id === d.pieceId);
+  const piece = PIECE_BY_ID.get(d.pieceId);
   if (!piece) return null;
 
   const size  = d.size || 1;
@@ -30,6 +30,7 @@ function spawnFromDescriptor(d, record) {
   const opts = {
     restitution: rest, friction: fric, density: dens, frictionAir: drag,
     label: piece.id, angle: d.angle || 0,
+    sleepThreshold: sleepThresholdFor(dynCount),
     render: { fillStyle: color + 'cc', strokeStyle: color, lineWidth: 2 },
   };
 
@@ -55,7 +56,7 @@ function spawnFromDescriptor(d, record) {
   cacheLocalVerts(body);
 
   World.add(engine.world, body);
-  bodyCount++; updateStatus();
+  recountBodies();
   if (record) recordSpawn(body, d);
   return body;
 }
@@ -79,7 +80,7 @@ function cacheLocalVerts(body) {
 function recordSpawn(body, descriptor) {
   const ref = { body };
   pushHistory(
-    () => { if (ref.body) { World.remove(engine.world, ref.body); bodyCount = Math.max(0, bodyCount - 1); updateStatus(); } },
+    () => { if (ref.body) { World.remove(engine.world, ref.body); recountBodies(); } },
     () => { ref.body = spawnFromDescriptor(descriptor, false); }
   );
 }

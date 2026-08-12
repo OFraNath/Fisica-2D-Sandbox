@@ -7,6 +7,7 @@ let mode           = 'place';   // modo ativo: 'place' | 'select' | 'joint'
 let paused         = false;
 let ghostVisible   = false;
 let bodyCount      = 0;
+let userPrecision  = 10;    // teto do solver ajustável no slider de precisão
 let selectedBodies = [];
 let jointPending   = null;      // primeiro corpo clicado no modo Joint (aguarda segundo)
 let lastWorldMouse = { x: 0, y: 0 };
@@ -21,7 +22,7 @@ let gravityStrength     = 1;     // multiplicador de força (slider do painel)
 let uniformGravity      = 1;     // gravidade uniforme do usuário (restaurada ao desligar o ponto)
 
 // Motor gráfico (ver js/graphics/render-backend-manager.js)
-let renderBackend     = 'auto';  // 'auto' | 'gpu' | 'cpu' | 'dom'
+let renderBackend     = 'auto';  // 'auto' | 'gpu' | 'cpu'
 let simulationBackend = 'cpu';   // 'cpu' (Matter.js) | 'gpu' (WebGPU — roadmap)
 
 // Propriedades do próximo corpo a ser spawnado (ligadas aos sliders do painel)

@@ -1,9 +1,27 @@
 // ── Constantes globais do mundo físico ───────────────────────────────────────
 // Ajuste aqui sem precisar vasculhar o resto do código.
 
-const MAX_BODIES      = 1000;   // limite de corpos dinâmicos simultâneos
+const MAX_BODIES      = 2000;   // limite de corpos dinâmicos simultâneos
 const MAX_SPEED       = 128;    // velocidade máxima de qualquer corpo (px/frame)
 const HISTORY_LIMIT   = 50;     // número máximo de passos no histórico de desfazer
+
+// Solver adaptativo: reduz iterações conforme a carga de corpos cresce.
+// Fases 1-4 do tuning incremental — o slider de precisão vira o TETO
+// (userPrecision), e tuneSolverForLoad() aplica o mínimo entre teto e faixa.
+const SOLVER_TUNE = [
+  { maxBodies: 150,  pos: 10, vel: 8,  con: 2 }, // poucos corpos: qualidade máxima
+  { maxBodies: 400,  pos: 6,  vel: 4,  con: 1 }, // pilhas médias: equilíbrio
+  { maxBodies: 900,  pos: 4,  vel: 3,  con: 1 }, // cena carregada
+  { maxBodies: Infinity, pos: 3, vel: 2, con: 1 }, // centenas+ : prioriza FPS
+];
+
+// Sleep mais agressivo sob carga: pilhas adormecem mais rápido (solver ignora).
+const SLEEP_THRESHOLD_TUNE = [
+  { maxBodies: 150,  threshold: 60 },  // padrão do Matter
+  { maxBodies: 400,  threshold: 30 },
+  { maxBodies: 900,  threshold: 20 },
+  { maxBodies: Infinity, threshold: 12 },
+];
 
 // Câmera
 const CAMERA_PAN_LIMIT = 50000; // limite de deslocamento em cada eixo
@@ -13,7 +31,7 @@ const GLOW_SCALE       = 0.5;   // resolução da camada de glow (0.5 = metade d
 const GLOW_BLUR_PX     = 13;    // raio de blur único equivalente ao shadowBlur(22)
 const GLOW_CULL_MARGIN = 80;    // margem extra para não cortar halos na borda da view
 
-// Backends de render (GPU/WebGL2 e FRONT/DOM)
+// Backends de render (GPU/WebGL2 e CPU/Canvas 2D)
 const GPU_OUTLINE_PX     = 2;   // espessura do contorno dos corpos (px de tela)
 const GPU_GLOW_STROKE_PX = 4;   // espessura do traço do glow (paridade com o 2D)
 const GPU_FILL_ALPHA     = 0.8; // alpha do preenchimento (paridade com o sufixo 'cc')

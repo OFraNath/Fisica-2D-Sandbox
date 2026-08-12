@@ -24,7 +24,7 @@ function colorVariant(hex) { return lighten(hex, Math.random() * 80 - 40); }
 
 /**
  * Converte uma cor hex em canais RGB (0–255).
- * Usado pelos backends GPU/DOM para montar cores sem parse por frame.
+ * Usado pelo backend GPU para montar cores sem parse por frame.
  * @param {string} hex  Cor no formato '#rrggbb'
  * @returns {number[]}  [r, g, b]
  */

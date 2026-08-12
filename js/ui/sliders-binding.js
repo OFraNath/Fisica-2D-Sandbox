@@ -42,11 +42,10 @@ document.getElementById('sl-wind').addEventListener('input', function () {
 });
 
 document.getElementById('sl-precision').addEventListener('input', function () {
-  const v = parseInt(this.value);
-  engine.positionIterations = v;
-  engine.velocityIterations = Math.max(1, v - 2);
-  engine.constraintIterations = clamp(Math.round(v / 4), 2, 8);
-  document.getElementById('val-precision').textContent = v;
+  userPrecision = parseInt(this.value);
+  document.getElementById('val-precision').textContent = userPrecision;
+  // O valor efetivo é min(userPrecision, tier por carga) — tuneSolverForLoad
+  if (typeof tuneSolverForLoad === 'function') tuneSolverForLoad(bodyCount);
 });
 
 // Gravidade pontual (buraco negro)

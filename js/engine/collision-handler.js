@@ -7,6 +7,10 @@ let lastSoundTime = 0;
 Events.on(engine, 'collisionStart', evt => {
   const now = performance.now();
 
+  // Set de corpos conectados por joint, resolvido UMA vez por evento
+  // (antes era Composite.allConstraints().some() a cada par × corpo).
+  let connectedIds = null;
+
   evt.pairs.forEach(pair => {
     const { bodyA, bodyB, collision } = pair;
     const rel         = Vector.sub(bodyA.velocity, bodyB.velocity);
@@ -51,14 +55,20 @@ Events.on(engine, 'collisionStart', evt => {
       if (impactSpeed < fractureThreshold)         return;
       if ((b.plugin.sizeFactor || 1) < FRACTURE_MIN_SIZE_FACTOR) return;
 
-      const piece = PIECES.find(p => p.id === b.label);
+      const piece = PIECE_BY_ID.get(b.label);
       if (!piece || piece.w * piece.h < FRACTURE_MIN_AREA)       return;
 
-      // Não fragmenta corpos conectados por joints
-      const isConnected = Composite.allConstraints(engine.world).some(c =>
-        c !== mConstraint.constraint && (c.bodyA === b || c.bodyB === b)
-      );
-      if (isConnected) return;
+      // Não fragmenta corpos conectados por joints (cache do Set do evento)
+      if (!connectedIds) {
+        connectedIds = new Set();
+        Composite.allConstraints(engine.world).forEach(c => {
+          if (c !== mConstraint.constraint) {
+            if (c.bodyA) connectedIds.add(c.bodyA.id);
+            if (c.bodyB) connectedIds.add(c.bodyB.id);
+          }
+        });
+      }
+      if (connectedIds.has(b.id)) return;
 
       fractureBody(b, piece);
     });

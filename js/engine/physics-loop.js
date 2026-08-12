@@ -1,10 +1,11 @@
 // ── Loop de física: atualizações por frame em cada corpo ─────────────────────
 // Roda no evento 'afterUpdate' do Matter.js (sincronizado com o display).
-// Responsabilidades: vento, ímã, gravidade pontual, cap de velocidade,
-// expiração de squash, remoção de corpos fora da viewport e cache da lista
-// de corpos para o render (evita criar arrays O(n) por frame).
+// Responsabilidades: tuning do solver por carga, vento, ímã, gravidade pontual,
+// cap de velocidade, expiração de squash, remoção de corpos fora da viewport
+// e cache da lista de corpos p/ o render (evita criar arrays O(n) por frame).
 
 let updateFrame = 0;
+let lastTuneBins = { pos: -1, vel: -1, con: -1, sleep: -1 };
 
 /**
  * Cache da lista completa de corpos do mundo, atualizado ao fim de cada
@@ -22,6 +23,41 @@ function removeBodyAndConstraints(b) {
   World.remove(engine.world, b);
 }
 
+/** Faixa de tuning do solver para a carga atual (pos/vel/con/sleep). */
+function solverTierFor(count) {
+  let tier = SOLVER_TUNE[SOLVER_TUNE.length - 1];
+  for (const t of SOLVER_TUNE) {
+    if (count <= t.maxBodies) { tier = t; break; }
+  }
+  return tier;
+}
+
+/** sleepThreshold (frames até adormecer) para a carga atual. */
+function sleepThresholdFor(count) {
+  let threshold = SLEEP_THRESHOLD_TUNE[SLEEP_THRESHOLD_TUNE.length - 1].threshold;
+  for (const t of SLEEP_THRESHOLD_TUNE) {
+    if (count <= t.maxBodies) { threshold = t.threshold; break; }
+  }
+  return threshold;
+}
+
+/**
+ * Ajusta iterações do solver conforme a carga de corpos, usando o slider de
+ * precisão (userPrecision) como teto. Chamado por recountBodies() quando o
+ * número de corpos muda — evitar chamadas O(n) por frame.
+ */
+function tuneSolverForLoad(count) {
+  const tier = solverTierFor(count);
+  if (lastTuneBins.pos === tier.pos && lastTuneBins.vel === tier.vel &&
+      lastTuneBins.con === tier.con) return;
+
+  // userPrecision é o teto (slider do painel); o tier reduz conforme a carga
+  engine.positionIterations   = Math.min(userPrecision, tier.pos);
+  engine.velocityIterations   = Math.max(1, Math.min(userPrecision - 2, tier.vel));
+  engine.constraintIterations = Math.min(tier.con, clamp(Math.round(userPrecision / 4), 2, 8));
+  lastTuneBins = { pos: tier.pos, vel: tier.vel, con: tier.con };
+}
+
 Events.on(engine, 'afterUpdate', () => {
   updateFrame++;
   const now = performance.now();
@@ -33,19 +69,36 @@ Events.on(engine, 'afterUpdate', () => {
     ? { x: camera.x + W / 2 / camera.zoom, y: camera.y + H / 2 / camera.zoom }
     : null;
 
-  const bodies = Composite.allBodies(engine.world).filter(b => !b.isStatic);
+  lastBodies = Composite.allBodies(engine.world);
+  const bodies = lastBodies;
 
-  // Corpos adormecidos ignoram forças no Matter.js; desperta-os quando
-  // alguma força externa (vento, ímã ou buraco negro) está ativa.
+  // Acorda apenas corpos que serão realmente afetados por forças externas
+  // (ímã: área de influência; gravidade pontual: raio; vento: todos).
   if (windForce !== 0 || magnetActive || pointGravityEnabled) {
     for (let i = 0; i < bodies.length; i++) {
-      if (bodies[i].isSleeping) Body.set(bodies[i], 'isSleeping', false);
+      const b = bodies[i];
+      if (b.isStatic || !b.isSleeping) continue;
+      if (windForce !== 0) { Body.set(b, 'isSleeping', false); continue; }
+      if (magnetActive) {
+        const dxm = lastWorldMouse.x - b.position.x;
+        const dym = lastWorldMouse.y - b.position.y;
+        if (dxm * dxm + dym * dym < 320 * 320) { Body.set(b, 'isSleeping', false); continue; }
+      }
+      if (gp) {
+        const dxg = gp.x - b.position.x;
+        const dyg = gp.y - b.position.y;
+        if (dxg * dxg + dyg * dyg < GRAVITY_POINT_RADIUS * GRAVITY_POINT_RADIUS)
+          Body.set(b, 'isSleeping', false);
+      }
     }
   }
 
   let removed = 0;
 
-  bodies.forEach(b => {
+  for (let i = 0; i < bodies.length; i++) {
+    const b = bodies[i];
+    if (b.isStatic) continue;
+
     // ── Remoção de corpos que saíram da viewport (qualquer direção) ──
     if (updateFrame % 6 === 0) {
       const vw = W / camera.zoom, vh = H / camera.zoom;
@@ -56,7 +109,7 @@ Events.on(engine, 'afterUpdate', () => {
       if (outside) {
         removeBodyAndConstraints(b);
         removed++;
-        return;
+        continue;
       }
     }
 
@@ -105,9 +158,10 @@ Events.on(engine, 'afterUpdate', () => {
       b.render.visible     = true;
       b.plugin.squashUntil = null;
     }
-  });
+  }
 
-  lastBodies = Composite.allBodies(engine.world);
-
-  if (removed) { bodyCount = Math.max(0, bodyCount - removed); updateStatus(); }
+  if (removed) recountBodies();
 });
+
+// Aplica o tuning inicial (math com userPrecision 10 = comportamento padrão)
+tuneSolverForLoad(0);

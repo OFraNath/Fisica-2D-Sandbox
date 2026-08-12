@@ -39,19 +39,18 @@ function deleteBodiesWithHistory(bodies) {
 
   World.remove(engine.world, bodies);
   World.remove(engine.world, connectedConstraints);
-  bodyCount = Math.max(0, bodyCount - bodies.length);
-  updateStatus();
+  recountBodies();
 
   pushHistory(
     () => {
       World.add(engine.world, bodies);
       World.add(engine.world, connectedConstraints);
-      bodyCount += bodies.length; updateStatus();
+      recountBodies();
     },
     () => {
       World.remove(engine.world, bodies);
       World.remove(engine.world, connectedConstraints);
-      bodyCount = Math.max(0, bodyCount - bodies.length); updateStatus();
+      recountBodies();
     }
   );
 }

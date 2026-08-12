@@ -49,3 +49,6 @@ const PIECES = [
     vb: '0 0 32 32'
   },
 ];
+
+/** Map id → peça (evita PIECES.find() em hot paths como colisões). */
+const PIECE_BY_ID = new Map(PIECES.map(p => [p.id, p]));

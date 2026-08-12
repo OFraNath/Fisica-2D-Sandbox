@@ -50,7 +50,7 @@ document.addEventListener('keydown', e => {
   if (e.key === 'l' || e.key === 'L') { toggleLock();      return; }
   if (e.key === 'e' || e.key === 'E') { btnExplode.click();return; }
   if (e.key === 'c' || e.key === 'C') { btnClear.click();  return; }
-  if (e.key === 'x' || e.key === 'X') { ensureAudio(); rainBurst(); return; }
+  if (e.key === 'x' || e.key === 'X') { ensureAudio(); rainBurst(e.shiftKey ? 200 : undefined); return; }
   if (e.key === 'r' || e.key === 'R') { resetCamera();     return; }
   if (e.key === '+' || e.key === '=') { bumpSize(0.1);     return; }
   if (e.key === '-' || e.key === '_') { bumpSize(-0.1);    return; }

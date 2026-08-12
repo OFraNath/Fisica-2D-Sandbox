@@ -9,7 +9,7 @@
   background-size: 40px 40px;
   cursor: crosshair;
 }
-/* Canvas 2D do Matter (corpos no modo CPU; overlays nos modos GPU/DOM) */
+/* Canvas 2D do Matter (corpos no modo CPU; overlays no modo GPU) */
 #canvas-wrap > canvas:not(#gpu-canvas) {
   position: absolute;
   top: 0;
@@ -23,28 +23,6 @@
   left: 0;
   z-index: 1;
   display: none;
-}
-
-/* ── Camada DOM de corpos (backend FRONT, compositor GPU) ── */
-#dom-body-layer {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 0;
-  overflow: hidden;
-  display: none;
-  pointer-events: none;
-  will-change: transform;
-}
-#dom-body-layer .dom-body {
-  position: absolute;
-  top: 0;
-  left: 0;
-  box-sizing: border-box;
-  pointer-events: none;
-  will-change: transform;
 }
 
 /* ── Ghost de spawn (preview da peça sob o cursor) ── */

@@ -15,4 +15,6 @@ function toggleLock() {
       if (b.plugin.unlockedRender) Object.assign(b.render, b.plugin.unlockedRender);
     }
   });
+  // Travar/destravar muda o estado isStatic → recalcula a contagem de dinâmicos
+  recountBodies();
 }

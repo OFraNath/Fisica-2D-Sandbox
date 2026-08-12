@@ -9,7 +9,7 @@
  * @returns {{ originalBody, originalDesc, shards }|null}
  */
 function explodeBodyIntoPieces(b, spawnedShardsArray) {
-  const piece = PIECES.find(p => p.id === b.label);
+  const piece = PIECE_BY_ID.get(b.label);
   if (!piece) return null;
 
   const pos          = { ...b.position };
@@ -24,7 +24,6 @@ function explodeBodyIntoPieces(b, spawnedShardsArray) {
   const spread = Math.max(14, sizeFactor * 0.25 * Math.max(piece.w, piece.h));
 
   World.remove(engine.world, b);
-  bodyCount = Math.max(0, bodyCount - 1);
 
   const localShards = [];
   for (let i = 0; i < FRACTURE_FRAGMENTS; i++) {
@@ -72,7 +71,6 @@ function fractureBody(b, piece) {
     friction: b.friction, density: b.density, frictionAir: b.frictionAir,
   };
   World.remove(engine.world, b);
-  bodyCount = Math.max(0, bodyCount - 1);
 
   for (let i = 0; i < FRACTURE_FRAGMENTS_IMPACT; i++) {
     const ang = (Math.PI * 2 / FRACTURE_FRAGMENTS_IMPACT) * i + Math.random();
@@ -92,5 +90,5 @@ function fractureBody(b, piece) {
     }, false);
     if (shard) Body.setAngularVelocity(shard, b.angularVelocity + (Math.random() - 0.5) * 0.25);
   }
-  updateStatus();
+  recountBodies();
 }

@@ -8,7 +8,6 @@ let activeBackend = 'cpu'; // backend efetivo após resolver o AUTO
 const BACKEND_LABELS = {
   gpu: 'GPU · WebGL2',
   cpu: 'CPU · Canvas 2D',
-  dom: 'FRONT · DOM',
 };
 
 /** Converte a escolha do usuário no backend efetivo (com fallback). */
@@ -20,14 +19,13 @@ function resolveBackend() {
 
 /**
  * Aplica o backend efetivo: liga/desliga o render nativo do Matter e
- * mostra/oculta as camadas GPU e DOM.
+ * mostra/oculta a camada GPU.
  */
 function applyRenderBackend(target) {
   if (target === 'cpu') {
     Render.stop(render);
     Render.run(render);
     if (gpuCanvas) gpuCanvas.style.display = 'none';
-    if (domLayer) domLayer.style.display = 'none';
   } else if (target === 'gpu') {
     if (!activateGpuBackend()) {
       // WebGL2 indisponível/falhou nesta GPU: cai para CPU em vez de
@@ -36,20 +34,13 @@ function applyRenderBackend(target) {
       Render.stop(render);
       Render.run(render);
       if (gpuCanvas) gpuCanvas.style.display = 'none';
-    } else if (domLayer) {
-      domLayer.style.display = 'none';
     }
-  } else if (target === 'dom') {
-    Render.stop(render);
-    ensureDomLayer();
-    domLayer.style.display = 'block';
-    if (gpuCanvas) gpuCanvas.style.display = 'none';
   }
   activeBackend = target;
 }
 
 /**
- * Define o backend escolhido pelo usuário ('auto' | 'gpu' | 'cpu' | 'dom').
+ * Define o backend escolhido pelo usuário ('auto' | 'gpu' | 'cpu').
  * Em caso de indisponibilidade (ex.: sem WebGL2), cai automaticamente na CPU.
  */
 function setRenderBackend(name) {
@@ -71,13 +62,12 @@ function drawByBackend(ctx, source) {
   }
   if (source === 'cpu') return;
 
-  // Backends GPU/DOM: o canvas 2D fica por cima e recebe apenas overlays
+  // Backend GPU: o canvas 2D fica por cima e recebe apenas overlays
   ctx.clearRect(0, 0, W, H);
   drawFloorLine(ctx);
   drawGravityPointMarker(ctx);
 
-  if (activeBackend === 'gpu') gpuDrawFrame();
-  else domDrawFrame();
+  gpuDrawFrame();
 
   drawSquashAnimations(ctx, getBodies());
   drawSelectionHighlight(ctx);
