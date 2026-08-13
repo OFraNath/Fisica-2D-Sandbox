@@ -9,18 +9,15 @@ Um sandbox de física 2D interativo feito com HTML, CSS e JavaScript puro, usand
 - Clique para soltar objetos na tela
 - Pressione `H` para abrir a ajuda com todos os atalhos
 - `Espaço` pausa/retoma a simulação
-- `Ctrl+Z` desfaz a última ação
-
-## Rodando localmente
-
-Não é necessário build nem instalação de dependências — é só abrir o `index.html` no navegador, ou servir a pasta com qualquer servidor estático:
-
-```bash
-npx serve .
-```
 
 ## Tecnologias
 
 - HTML5 / CSS3
 - JavaScript (vanilla)
 - [Matter.js](https://brm.io/matter-js/) para a simulação física
+
+## ⚖️ Licença
+
+Este projeto está licenciado sob a **GNU General Public License v3.0 (GPLv3)**. Para mais detalhes legais, consulte o arquivo [LICENSE](./LICENSE) na raiz do repositório.
+
+> **Resumo prático:** Você é livre para usar, estudar, modificar e distribuir este software. No entanto, qualquer versão modificada ou projeto derivado **deve ser mantido como código aberto** sob esta mesma licença (GPLv3), dando os devidos créditos aos autores originais.
