@@ -21,7 +21,8 @@ document.addEventListener('keydown', e => {
       selectedBodies = [];
       updateSelStatus();
     } else {
-      const bodies = Composite.allBodies(engine.world).filter(b => !b.isStatic);
+      const bodies = Composite.allBodies(engine.world)
+        .filter(b => b.label !== 'floor' && b.label !== 'wall');
       if (bodies.length) deleteBodiesWithHistory([bodies[bodies.length - 1]]);
     }
     return;

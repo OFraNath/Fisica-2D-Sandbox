@@ -59,6 +59,8 @@ function onMobileModeChanged() {
   scheduleViewportResize();
   if (typeof rebuildMobileToolbar === 'function') rebuildMobileToolbar();
   if (typeof updateMobileDrawerState === 'function') updateMobileDrawerState();
+  if (typeof updateCursorModeButton === 'function') updateCursorModeButton();
+  if (typeof updatePrecisionToolLocks === 'function') updatePrecisionToolLocks();
 }
 
 // Resize inicial: garante consistência caso o CSS de layout mobile já tenha

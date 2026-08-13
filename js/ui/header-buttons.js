@@ -10,15 +10,16 @@ function flashBtn(btn) {
 const btnPause = document.getElementById('btn-pause');
 btnPause.addEventListener('click', () => {
   paused = !paused;
-  if (paused) { Runner.stop(runner); btnPause.textContent = '▶ RETOMAR'; }
-  else        { Runner.run(runner, engine); btnPause.textContent = '⏸ PAUSAR'; }
+  engine.timing.timeScale = paused ? 0 : 1;
+  btnPause.textContent = paused ? '▶ RETOMAR' : '⏸ PAUSAR';
 });
 
 // ── Limpar todos os corpos ──
 const btnClear = document.getElementById('btn-clear');
 btnClear.addEventListener('click', () => {
   flashBtn(btnClear);
-  const bodies = Composite.allBodies(engine.world).filter(b => !b.isStatic);
+  const bodies = Composite.allBodies(engine.world)
+    .filter(b => b.label !== 'floor' && b.label !== 'wall');
   deleteBodiesWithHistory(bodies);
 
   const constraints = Composite.allConstraints(engine.world).filter(c => c !== mConstraint.constraint);

@@ -64,3 +64,6 @@ const GRAVITY_POINT_RADIUS   = 700;   // raio de influência (px de mundo)
 
 // Arremesso (fling)
 const THROW_MAX_SAMPLES = 8;  // amostras posição/tempo guardadas durante o drag
+
+// Cursor Mobile Controlável (ver PLANO-CURSOR-MOBILE.md)
+const CURSOR_MODE_OFFSET_Y = 40; // deslocamento vertical (px) do cursor virtual acima do dedo

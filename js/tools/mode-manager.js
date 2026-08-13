@@ -22,7 +22,7 @@ function setMode(m) {
 // Conecta botões de ferramenta do painel (ignora toggles que não são modo:
 // PC Batata e Reação em Cadeia são .tool-btn só por estilo, sem data-mode —
 // se entrassem aqui, setMode(undefined) ligaria a classe .active neles).
-const NON_MODE_BTN_IDS = new Set(['btn-potato', 'btn-chaos']);
+const NON_MODE_BTN_IDS = new Set(['btn-potato', 'btn-chaos', 'btn-lock']);
 document.querySelectorAll('.tool-btn').forEach(b => {
   if (!NON_MODE_BTN_IDS.has(b.id)) b.addEventListener('click', () => setMode(b.dataset.mode));
 });

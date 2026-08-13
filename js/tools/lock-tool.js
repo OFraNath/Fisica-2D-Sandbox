@@ -17,4 +17,10 @@ function toggleLock() {
   });
   // Travar/destravar muda o estado isStatic → recalcula a contagem de dinâmicos
   recountBodies();
+  if (typeof drawByBackend === 'function') drawByBackend(render.context, 'external');
 }
+
+// Botão do painel (equivalente ao atalho L) — em mobile, fica bloqueado até
+// o Modo Cursor ser ligado (ver js/mobile/mobile-ui.js, PRECISION_TOOL_SELECTOR).
+const btnLock = document.getElementById('btn-lock');
+if (btnLock) btnLock.addEventListener('click', () => toggleLock());

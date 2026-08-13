@@ -116,3 +116,67 @@ body.mobile-mode #mobile-toolbar { display: flex; }
   body.mobile-mode #header h1 { font-size: 20px; }
   body.mobile-mode #panel { width: 92vw; }
 }
+
+/* ── Modo Cursor: botão flutuante ──────────────────────────────────────────
+   Único controle realmente flutuante do plano (fora da sidebar): precisa
+   ficar acessível com o drawer fechado, durante a interação direta com o
+   canvas. Fica acima da toolbar inferior, canto inferior direito. */
+#btn-cursor-mode {
+  display: none;
+  position: absolute;
+  z-index: 22;
+  right: 14px;
+  bottom: 14px;
+  width: 52px;
+  height: 52px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-size: 22px;
+  box-shadow: 0 2px 12px rgba(0,0,0,.5);
+  cursor: pointer;
+}
+#btn-cursor-mode.active {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: #221f0a;
+}
+#btn-cursor-mode:active { transform: scale(.94); }
+
+/* ── Cursor virtual + haste (Modo Cursor ON) ── */
+#mobile-cursor-dot {
+  display: none;
+  position: absolute;
+  z-index: 25;
+  top: 0; left: 0;
+  width: 26px; height: 26px;
+  margin-left: -13px;
+  margin-top: -13px;
+  border-radius: 50%;
+  border: 2px solid var(--accent);
+  background: rgba(240,192,64,.15);
+  pointer-events: none;
+}
+#mobile-cursor-dot.grabbed {
+  background: var(--accent);
+  border-color: #fff;
+}
+#mobile-cursor-stem {
+  display: none;
+  position: absolute;
+  z-index: 24;
+  top: 0; left: 0;
+  height: 2px;
+  background: rgba(240,192,64,.5);
+  transform-origin: left center;
+  pointer-events: none;
+}
+
+/* ── Ferramentas de precisão alta bloqueadas até o Modo Cursor ligar
+   (Selecionar, Conectar, Travar — PLANO-CURSOR-MOBILE.md §3.1) ── */
+body.mobile-mode .precision-locked {
+  opacity: .4;
+}
