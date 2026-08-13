@@ -3,6 +3,16 @@
   display: grid;
   grid-template-columns: 200px 1fr;
   grid-template-rows: 48px 1fr 40px;
-  height: 100vh;
+  height: 100vh;   /* fallback para navegadores sem suporte a dvh */
+  height: 100dvh;  /* altura dinâmica: acompanha barras do navegador mobile */
   gap: 0;
+  position: relative; /* âncora para drawer/toolbar/toggle absolutos do modo mobile */
+}
+
+/* ── Modo Mobile: layout específico (ver css/mobile.css para o restante) ──
+   Aqui só o essencial do grid: o resto (drawer, toolbar) vive em mobile.css
+   para manter a regra "um arquivo = uma responsabilidade". */
+body.mobile-mode #app {
+  grid-template-columns: 1fr;
+  grid-template-rows: 48px 1fr 40px;
 }

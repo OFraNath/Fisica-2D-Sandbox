@@ -9,8 +9,11 @@ const {
 } = Matter;
 
 const wrap = document.getElementById('canvas-wrap');
-const W = wrap.clientWidth;
-const H = wrap.clientHeight;
+// W/H eram `const` (lidos uma única vez no load) — agora são `let` porque
+// js/mobile/viewport-resize.js precisa recalculá-los em resize/orientationchange
+// (ver CLAUDE.md / PLANO-MOBILE.md, Fase 0: base de resize).
+let W = wrap.clientWidth;
+let H = wrap.clientHeight;
 
 // Engine com parâmetros de iteração padrão (ajustável via slider de precisão)
 const engine = Engine.create({

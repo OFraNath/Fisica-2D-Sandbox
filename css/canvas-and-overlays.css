@@ -8,6 +8,8 @@
     linear-gradient(90deg, rgba(255,255,255,.02) 1px, transparent 1px);
   background-size: 40px 40px;
   cursor: crosshair;
+  touch-action: none; /* pinch/pan de 2 dedos são tratados por js/mobile/touch-controls.js */
+  overscroll-behavior: contain;
 }
 /* Canvas 2D do Matter (corpos no modo CPU; overlays no modo GPU) */
 #canvas-wrap > canvas:not(#gpu-canvas) {

@@ -17,6 +17,7 @@
   <link rel="stylesheet" href="css/tooltip.css">
   <link rel="stylesheet" href="css/modal-help.css">
   <link rel="stylesheet" href="css/animations.css">
+  <link rel="stylesheet" href="css/mobile.css">
 </head>
 <body>
 <div id="app">
@@ -173,6 +174,9 @@
 <script src="js/utils/math-helpers.js"></script>
 <script src="js/utils/color-helpers.js"></script>
 
+<!-- Decide o layout mobile/desktop ANTES do Matter.js medir o canvas -->
+<script src="js/mobile/device-detect.js"></script>
+
 <script src="js/engine/matter-setup.js"></script>
 <script src="js/engine/world-boundaries.js"></script>
 
@@ -204,6 +208,10 @@
 <script src="js/ui/potato-mode.js"></script>
 <script src="js/ui/chaos-mode.js"></script>
 
+<!-- Entrada por toque e UI mobile: dependem de tools/ e ui/ acima -->
+<script src="js/mobile/touch-controls.js"></script>
+<script src="js/mobile/mobile-ui.js"></script>
+
 <script src="js/graphics/backend-info.js"></script>
 <script src="js/graphics/webgl/webgl-core.js"></script>
 <script src="js/graphics/webgl/webgl-geometry.js"></script>
@@ -222,6 +230,10 @@
 <script src="js/render/joint-line.js"></script>
 <script src="js/render/gravity-point-marker.js"></script>
 <script src="js/render/render-loop.js"></script>
+
+<!-- Resize reativo (Fase 0 do plano mobile): precisa de resizeGlowCanvas/
+     resizeGpuCanvas (já carregados acima) e de updateCameraBounds (camera/) -->
+<script src="js/mobile/viewport-resize.js"></script>
 
 <script src="js/engine/physics-loop.js"></script>
 <script src="js/engine/collision-handler.js"></script>

@@ -1,0 +1,118 @@
+/* ── Modo Mobile ───────────────────────────────────────────────────────────
+   Carregado por último de propósito: tudo aqui é escopado sob
+   `body.mobile-mode` e só se aplica quando o toggle está ligado (auto ou
+   manual), sem tocar no layout desktop existente. */
+
+/* ── Header: permite quebrar linha e não empurra o statusbar para fora ── */
+body.mobile-mode #header {
+  padding: 8px 10px;
+  gap: 8px;
+}
+body.mobile-mode #header .hint { display: none; } /* dica de mouse não se aplica em touch */
+body.mobile-mode .btn-header { gap: 4px; }
+body.mobile-mode .btn-header .btn { padding: 8px 9px; font-size: 10px; }
+
+/* ── Canvas ocupa a tela inteira; painel vira drawer sobreposto ── */
+body.mobile-mode #canvas-wrap {
+  grid-column: 1;
+  grid-row: 2;
+}
+
+body.mobile-mode #panel {
+  position: absolute;
+  z-index: 20;
+  top: 48px;
+  bottom: 40px;
+  left: 0;
+  width: min(86vw, 320px);
+  box-shadow: 4px 0 24px rgba(0,0,0,.5);
+  transform: translateX(-100%);
+  transition: transform .22s ease;
+}
+body.mobile-mode #panel.drawer-open { transform: translateX(0); }
+
+/* Alvos de toque maiores (diretriz ~44px) sem alterar a densidade no desktop */
+body.mobile-mode .piece-btn,
+body.mobile-mode .tool-btn,
+body.mobile-mode .btn,
+body.mobile-mode select {
+  min-height: 44px;
+}
+body.mobile-mode input[type=range]::-webkit-slider-thumb {
+  width: 22px; height: 22px;
+}
+body.mobile-mode input[type=range] { height: 6px; margin-bottom: 16px; }
+body.mobile-mode input[type=checkbox] { width: 20px; height: 20px; }
+
+/* ── Handle que abre/fecha o drawer ── */
+body.mobile-mode #btn-drawer-toggle {
+  position: absolute;
+  z-index: 21;
+  left: 0;
+  top: 56%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-left: none;
+  border-radius: 0 8px 8px 0;
+  color: var(--accent);
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 1px;
+  padding: 14px 6px;
+  cursor: pointer;
+}
+
+/* ── Toolbar inferior: comandos sem equivalente possível em toque puro ── */
+#mobile-toolbar {
+  display: none;
+  grid-column: 1;
+  grid-row: 3;
+  background: var(--panel);
+  border-top: 1px solid var(--border);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+body.mobile-mode #statusbar { display: none; } /* substituída pela toolbar em telas pequenas */
+body.mobile-mode #mobile-toolbar { display: flex; }
+
+.mobile-tool-btn {
+  flex: 1 0 auto;
+  min-width: 64px;
+  min-height: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  background: transparent;
+  border: none;
+  border-right: 1px solid var(--border);
+  color: var(--muted);
+  font-family: 'Space Mono', monospace;
+  padding: 4px 6px;
+}
+.mobile-tool-btn .mtb-icon { font-size: 16px; line-height: 1; }
+.mobile-tool-btn .mtb-label { font-size: 9px; letter-spacing: .3px; white-space: nowrap; }
+.mobile-tool-btn:active { background: #222; }
+.mobile-tool-btn.active { color: var(--accent); }
+.mobile-tool-btn.active .mtb-label { color: var(--accent); }
+
+/* ── Paisagem: pouca altura — drawer some da margem de topo/baixo do header/toolbar,
+   toolbar fica mais compacta para sobrar espaço vertical de simulação ── */
+@media (orientation: landscape) {
+  body.mobile-mode #header { padding: 4px 8px; }
+  body.mobile-mode #header h1 { font-size: 18px; }
+  body.mobile-mode .mobile-tool-btn { min-height: 34px; flex-direction: row; gap: 6px; }
+  body.mobile-mode .mtb-label { font-size: 9px; }
+}
+
+/* ── Telas muito estreitas em retrato: reduz ainda mais o header ── */
+@media (orientation: portrait) and (max-width: 400px) {
+  body.mobile-mode #header h1 { font-size: 20px; }
+  body.mobile-mode #panel { width: 92vw; }
+}
