@@ -11,6 +11,16 @@ Events.on(engine, 'collisionStart', evt => {
   // (antes era Composite.allConstraints().some() a cada par × corpo).
   let connectedIds = null;
 
+  // Corpos já fraturados NESTE evento de colisão. Um corpo pode aparecer em
+  // vários pares simultaneamente (ex.: espremido por vários vizinhos dentro
+  // do raio de um buraco negro) — sem esse guard, cada par extra chamava
+  // fractureBody() de novo sobre o mesmo corpo (já removido do mundo pela
+  // primeira chamada), multiplicando fragmentos por número de contatos
+  // simultâneos em vez do fator fixo de 3 por geração.
+  // Com chaosFractureEnabled, o guard é ignorado de propósito — o "bug"
+  // vira feature (Modo Caos).
+  const fracturedIds = new Set();
+
   evt.pairs.forEach(pair => {
     const { bodyA, bodyB, collision } = pair;
     const rel         = Vector.sub(bodyA.velocity, bodyB.velocity);
@@ -54,6 +64,7 @@ Events.on(engine, 'collisionStart', evt => {
       if (b.isStatic)                              return;
       if (impactSpeed < fractureThreshold)         return;
       if ((b.plugin.sizeFactor || 1) < FRACTURE_MIN_SIZE_FACTOR) return;
+      if (fracturedIds.has(b.id) && !chaosFractureEnabled) return;
 
       const piece = PIECE_BY_ID.get(b.label);
       if (!piece || piece.w * piece.h < FRACTURE_MIN_AREA)       return;
@@ -70,6 +81,7 @@ Events.on(engine, 'collisionStart', evt => {
       }
       if (connectedIds.has(b.id)) return;
 
+      fracturedIds.add(b.id);
       fractureBody(b, piece);
     });
   });

@@ -50,6 +50,11 @@
       <span>Precisão da física</span><span class="prop-val" id="val-precision">10</span>
     </div>
     <input type="range" id="sl-precision" min="5" max="500" step="1" value="10">
+    <button class="tool-btn" id="btn-chaos"
+            style="width:100%;text-align:center;margin-top:4px;margin-bottom:4px;"
+            title="Corpos espremidos por vários vizinhos ao mesmo tempo (ex.: dentro de um buraco negro) fraturam uma vez por contato simultâneo, não uma vez só — cascata de fragmentos.">
+      ⛓️ Reação em Cadeia: OFF
+    </button>
     <button class="tool-btn" id="btn-potato"
             style="width:100%;text-align:center;margin-top:4px;margin-bottom:8px;"
             title="Desativa efeitos visuais pesados para máxima performance">
@@ -197,6 +202,7 @@
 <script src="js/ui/tooltip-piece-buttons.js"></script>
 <script src="js/ui/modal-help.js"></script>
 <script src="js/ui/potato-mode.js"></script>
+<script src="js/ui/chaos-mode.js"></script>
 
 <script src="js/graphics/backend-info.js"></script>
 <script src="js/graphics/webgl/webgl-core.js"></script>

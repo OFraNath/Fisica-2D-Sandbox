@@ -16,6 +16,13 @@ let potatoMode     = false;     // desativa efeitos visuais pesados
 let fractureEnabled   = true;
 let fractureThreshold = 30;     // velocidade mínima de impacto para fraturar
 
+// Modo Caos: reintroduz de propósito o "bug" de fratura duplicada por par
+// de colisão simultâneo (ver collision-handler.js). Sem isso, um corpo
+// nunca fratura mais de uma vez por evento — com isso, cada contato
+// simultâneo conta como uma fratura extra, multiplicando fragmentos em
+// aglomerados densos (ex.: dentro de um buraco negro).
+let chaosFractureEnabled = false;
+
 // Gravidade pontual (buraco negro)
 let pointGravityEnabled = false; // se true, atrai corpos para o centro da viewport
 let gravityStrength     = 1;     // multiplicador de força (slider do painel)

@@ -9,7 +9,7 @@ const modeLabels = { place: 'SOLTAR', select: 'SELECIONAR', joint: 'CONECTAR' };
  */
 function setMode(m) {
   mode = m;
-  document.querySelectorAll('.tool-btn').forEach(b => b.classList.toggle('active', b.dataset.mode === m));
+  document.querySelectorAll('.tool-btn').forEach(b => b.classList.toggle('active', !!b.dataset.mode && b.dataset.mode === m));
   document.getElementById('st-mode').textContent = 'MODO: ' + modeLabels[m];
 
   jointPending = null;
@@ -19,7 +19,10 @@ function setMode(m) {
   mConstraint.collisionFilter.mask = (m === 'select' || m === 'joint') ? 0x00000000 : 0xFFFFFFFF;
 }
 
-// Conecta botões de ferramenta do painel
+// Conecta botões de ferramenta do painel (ignora toggles que não são modo:
+// PC Batata e Reação em Cadeia são .tool-btn só por estilo, sem data-mode —
+// se entrassem aqui, setMode(undefined) ligaria a classe .active neles).
+const NON_MODE_BTN_IDS = new Set(['btn-potato', 'btn-chaos']);
 document.querySelectorAll('.tool-btn').forEach(b => {
-  if (b.id !== 'btn-potato') b.addEventListener('click', () => setMode(b.dataset.mode));
+  if (!NON_MODE_BTN_IDS.has(b.id)) b.addEventListener('click', () => setMode(b.dataset.mode));
 });
