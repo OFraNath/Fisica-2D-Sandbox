@@ -3,6 +3,11 @@
 // de todos os corpos em um canvas auxiliar de resolução reduzida, com blend
 // 'lighter', e aplica UM único blur sobre a camada inteira (custo O(1)).
 // Resultado: corpos próximos fundem seus halos naturalmente sem cálculo extra.
+//
+// Intensidade por corpo usa bodyGlowAlpha() (js/utils/math-helpers.js) — a
+// MESMA fórmula usada pelo bloom do backend GPU (webgl-bloom.js). Sem isso,
+// o CPU brilhava sempre no máximo enquanto o GPU acendia só com velocidade;
+// agora repouso/colisão ficam idênticos nos dois backends.
 
 const glowSupported = (() => {
   try { return typeof document.createElement('canvas').getContext('2d').filter === 'string'; }
@@ -36,7 +41,9 @@ function drawGlowLayer(ctx, bodies) {
 
     let anyGlow = false;
     bodies.forEach(b => {
-      if (b.isStatic || b.label === 'floor' || b.label === 'wall' || b.plugin.squashUntil) return;
+      if (b.label === 'floor' || b.label === 'wall') return;
+      const a = bodyGlowAlpha(b);
+      if (a <= 0.02) return;
       const min = worldToScreen(b.bounds.min.x, b.bounds.min.y);
       const max = worldToScreen(b.bounds.max.x, b.bounds.max.y);
       if (max.x < -GLOW_CULL_MARGIN || min.x > W + GLOW_CULL_MARGIN ||
@@ -44,6 +51,7 @@ function drawGlowLayer(ctx, bodies) {
 
       const color = b.plugin.color || '#f0c040';
       glowCtx.strokeStyle = color;
+      glowCtx.globalAlpha = a;
       glowCtx.beginPath();
       b.vertices.forEach((v, i) => {
         const sp = worldToScreen(v.x, v.y);
@@ -53,6 +61,7 @@ function drawGlowLayer(ctx, bodies) {
       glowCtx.stroke();
       anyGlow = true;
     });
+    glowCtx.globalAlpha = 1;
     glowCtx.restore();
 
     if (anyGlow) {
@@ -66,9 +75,12 @@ function drawGlowLayer(ctx, bodies) {
     // Fallback para navegadores sem suporte a ctx.filter (um shadowBlur por corpo)
     ctx.save();
     bodies.forEach(b => {
-      if (b.isStatic || b.label === 'floor' || b.label === 'wall' || b.plugin.squashUntil) return;
+      if (b.label === 'floor' || b.label === 'wall') return;
+      const a = bodyGlowAlpha(b);
+      if (a <= 0.02) return;
       const color = b.plugin.color || '#f0c040';
       ctx.save();
+      ctx.globalAlpha   = a;
       ctx.shadowBlur    = 22;
       ctx.shadowColor   = color;
       ctx.strokeStyle   = color;

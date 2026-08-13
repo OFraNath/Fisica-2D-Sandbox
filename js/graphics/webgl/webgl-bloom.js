@@ -31,15 +31,9 @@ function computeBlurWeights() {
   return w;
 }
 
-/**
- * Intensidade do glow de um corpo: ∝ velocidade, com piso em repouso.
- * Blocos parados ficam calmos (como no 2D); impacto e queda acendem o halo.
- */
-function bodyGlowAlpha(b) {
-  if (b.isStatic || b.plugin.squashUntil) return 0;
-  const t = Math.min(1, (b.speed || 0) / GPU_GLOW_SPEED_FULL);
-  return GPU_GLOW_AT_REST + (1 - GPU_GLOW_AT_REST) * t * t;
-}
+// bodyGlowAlpha vive em js/utils/math-helpers.js (compartilhada com o
+// backend CPU em glow-layer.js, para os dois terem exatamente o mesmo
+// comportamento de intensidade — repouso calmo, impacto brilhante).
 
 /** Cria o FBO, as texturas ping-pong e o quad de tela cheia. */
 function initGpuBloom(gl) {
