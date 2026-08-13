@@ -66,6 +66,7 @@ function drawByBackend(ctx, source) {
   ctx.clearRect(0, 0, W, H);
   drawFloorLine(ctx);
   drawGravityPointMarker(ctx);
+  drawJointLines(ctx);
 
   gpuDrawFrame();
 
